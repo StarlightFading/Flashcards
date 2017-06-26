@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="rh.flashcards.feature.decklist.DeckListActivity"
-    tools:showIn="@layout/activity_deck_list">
+    tools:context="rh.flashcards.feature.cardlist.CardListActivity"
+    tools:showIn="@layout/activity_card_list">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_decks"
+        android:id="@+id/recycler_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

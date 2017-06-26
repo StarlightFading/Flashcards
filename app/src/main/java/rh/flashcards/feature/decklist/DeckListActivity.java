@@ -1,5 +1,6 @@
 package rh.flashcards.feature.decklist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import rh.flashcards.R;
 import rh.flashcards.data.DeckRepository;
 import rh.flashcards.data.database.DatabaseDeckRepository;
 import rh.flashcards.entity.Deck;
+import rh.flashcards.feature.cardlist.CardListActivity;
 
 public class DeckListActivity extends AppCompatActivity {
 
@@ -76,6 +78,15 @@ public class DeckListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         deckAdapter = new DeckAdapter(deckRepository.findAll());
+
+        deckAdapter.setOnClickListener(new RecyclerViewAdapter.OnClickListener<Deck>() {
+            @Override
+            public void onItemClicked(Deck item) {
+                Intent intent = new Intent(DeckListActivity.this, CardListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         deckAdapter.setOnLongClickListener(new RecyclerViewAdapter.OnLongClickListener<Deck>() {
             @Override
             public void onItemLongClicked(Deck deck) {
