@@ -1,5 +1,7 @@
 package rh.flashcards.feature.decklist;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,7 +52,7 @@ public class DeckListActivity extends AppCompatActivity {
                     showDeckDialog(selectedDeck);
                     break;
                 case R.id.action_delete_deck:
-                    removeSelectedDeck();
+                    deleteSelectedDeck();
                     break;
                 default:
                     return false;
@@ -147,8 +149,17 @@ public class DeckListActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "DeckDialog");
     }
 
-    private void removeSelectedDeck() {
-        deckRepository.delete(selectedDeck);
-        deckAdapter.removeItem(selectedDeck);
+    private void deleteSelectedDeck() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.message_delete_deck_confirmation)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deckRepository.delete(selectedDeck);
+                        deckAdapter.removeItem(selectedDeck);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 }

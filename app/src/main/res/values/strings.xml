@@ -9,4 +9,7 @@
     <string name="front">Front</string>
     <string name="back">Back</string>
     <string name="save">Save</string>
+    <string name="error_input_empty">This field can\'t be empty</string>
+    <string name="message_delete_card_confirmation">Are you sure you want to delete this card?</string>
+    <string name="message_delete_deck_confirmation">Are you sure you want to delete this deck?</string>
 </resources>

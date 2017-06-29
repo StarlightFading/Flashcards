@@ -1,20 +1,27 @@
 package rh.flashcards.feature.cardlist;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rh.android.RecyclerViewAdapter;
 import rh.flashcards.R;
 import rh.flashcards.data.CardRepository;
 import rh.flashcards.data.database.DatabaseCardRepository;
+import rh.flashcards.entity.Card;
 import rh.flashcards.entity.Deck;
 import rh.flashcards.feature.cardeditor.CardEditorActivity;
 
@@ -29,6 +36,43 @@ public class CardListActivity extends AppCompatActivity {
     private Deck deck;
 
     private CardRepository cardRepository;
+    private ActionMode actionMode;
+    private Card selectedCard;
+    private CardAdapter cardAdapter;
+    private final ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.card_list_action_mode, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_edit_card:
+                    editSelectedCard();
+                    break;
+                case R.id.action_delete_card:
+                    deleteSelectedCard();
+                    break;
+                default:
+                    return false;
+            }
+
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+        }
+    };
 
     public static Intent createIntent(Context context, Deck deck) {
         Intent intent = new Intent(context, CardListActivity.class);
@@ -63,11 +107,6 @@ public class CardListActivity extends AppCompatActivity {
         loadCards();
     }
 
-    private void loadCards() {
-        CardAdapter cardAdapter = new CardAdapter(cardRepository.findForDeck(deck));
-        recyclerCards.setAdapter(cardAdapter);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CARD_EDITOR && resultCode == CardEditorActivity.RESULT_CARD_SAVED) {
@@ -81,5 +120,41 @@ public class CardListActivity extends AppCompatActivity {
     public void onFabClicked() {
         Intent intent = CardEditorActivity.createIntent(this, deck);
         startActivityForResult(intent, REQUEST_CARD_EDITOR);
+    }
+
+    private void loadCards() {
+        cardAdapter = new CardAdapter(cardRepository.findForDeck(deck));
+
+        // TODO: should not redo this every time cards are loaded
+        cardAdapter.setOnLongClickListener(new RecyclerViewAdapter.OnLongClickListener<Card>() {
+            @Override
+            public void onItemLongClicked(Card card) {
+                if (actionMode == null) {
+                    selectedCard = card;
+                    startSupportActionMode(actionModeCallback);
+                }
+            }
+        });
+
+        recyclerCards.setAdapter(cardAdapter);
+    }
+
+    private void editSelectedCard() {
+        Intent intent = CardEditorActivity.createIntent(this, deck, selectedCard);
+        startActivityForResult(intent, REQUEST_CARD_EDITOR);
+    }
+
+    private void deleteSelectedCard() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.message_delete_card_confirmation)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cardAdapter.removeItem(selectedCard);
+                        cardRepository.delete(selectedCard);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 }

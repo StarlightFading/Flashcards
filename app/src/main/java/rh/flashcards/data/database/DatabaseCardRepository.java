@@ -50,15 +50,36 @@ public class DatabaseCardRepository implements CardRepository {
         card.setId(id);
     }
 
+    @Override
+    public void update(Card card) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.update(
+                Schema.Card.TABLE_NAME,
+                createContentValues(card),
+                Schema.Card.ID + "=?",
+                new String[]{String.valueOf(card.getId())});
+    }
+
+    @Override
+    public void delete(Card card) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(Schema.Card.TABLE_NAME, Schema.Card.ID + "=?", new String[]{String.valueOf(card.getId())});
+    }
+
     private ContentValues createContentValues(Card card, Deck deck) {
-        ContentValues values = new ContentValues();
-        values.put(Schema.Card.FRONT, card.getFront());
-        values.put(Schema.Card.BACK, card.getBack());
+        ContentValues values = createContentValues(card);
         values.put(Schema.Card.DECK_ID, deck.getId());
 
         return values;
     }
 
+    private ContentValues createContentValues(Card card) {
+        ContentValues values = new ContentValues();
+        values.put(Schema.Card.FRONT, card.getFront());
+        values.put(Schema.Card.BACK, card.getBack());
+
+        return values;
+    }
 
     private Card createCardFromCursor(Cursor cursor) {
         Card card = new Card();

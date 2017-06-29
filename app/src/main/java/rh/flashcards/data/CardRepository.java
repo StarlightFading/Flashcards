@@ -10,4 +10,8 @@ public interface CardRepository {
     List<Card> findForDeck(Deck deck);
 
     void create(Card card, Deck deck);
+
+    void update(Card card);
+
+    void delete(Card card);
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import butterknife.BindView;
@@ -19,7 +20,9 @@ import rh.flashcards.entity.Deck;
 public class CardEditorActivity extends AppCompatActivity {
 
     public static final int RESULT_CARD_SAVED = 1;
-    private static final String ARG_DECK = "deck";
+
+    private static final String EXTRA_DECK = "deck";
+    private static final String EXTRA_CARD = "card";
 
     @BindView(R.id.edit_card_front)
     EditText editCardFront;
@@ -29,11 +32,20 @@ public class CardEditorActivity extends AppCompatActivity {
 
     private Deck deck;
 
+    private Card card;
+
     private CardRepository cardRepository;
 
     public static Intent createIntent(Context context, Deck deck) {
         Intent intent = new Intent(context, CardEditorActivity.class);
-        intent.putExtra(ARG_DECK, deck);
+        intent.putExtra(EXTRA_DECK, deck);
+
+        return intent;
+    }
+
+    public static Intent createIntent(Context context, Deck deck, Card card) {
+        Intent intent = createIntent(context, deck);
+        intent.putExtra(EXTRA_CARD, card);
 
         return intent;
     }
@@ -47,11 +59,20 @@ public class CardEditorActivity extends AppCompatActivity {
         cardRepository = new DatabaseCardRepository(this);
 
         Intent intent = getIntent();
-        if (!intent.hasExtra(ARG_DECK)) {
+        if (!intent.hasExtra(EXTRA_DECK)) {
             throw new IllegalStateException("CardEditorActivity must be supplied Deck via Intent");
         }
 
-        deck = (Deck) intent.getSerializableExtra(ARG_DECK);
+        if (intent.hasExtra(EXTRA_CARD)) {
+            card = (Card) intent.getSerializableExtra(EXTRA_CARD);
+
+            editCardFront.setText(card.getFront());
+            editCardBack.setText(card.getBack());
+        } else {
+            card = new Card();
+        }
+
+        deck = (Deck) intent.getSerializableExtra(EXTRA_DECK);
     }
 
     @Override
@@ -62,19 +83,57 @@ public class CardEditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_save) {
-            Card card = new Card();
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                saveCardAndFinish();
+                break;
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        editCardFront.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
+    private void saveCardAndFinish() {
+        if (validateInput()) {
             card.setFront(editCardFront.getText().toString());
             card.setBack(editCardBack.getText().toString());
 
-            cardRepository.create(card, deck);
+            if (card.getId() == null) {
+                cardRepository.create(card, deck);
+            } else {
+                cardRepository.update(card);
+            }
 
             setResult(RESULT_CARD_SAVED);
             finish();
+        }
+    }
 
-            return true;
+    private boolean validateInput() {
+        boolean valid = true;
+
+        if (editCardFront.getText().toString().trim().isEmpty()) {
+            editCardFront.setError(getString(R.string.error_input_empty));
+            valid = false;
         }
 
-        return false;
+        if (editCardBack.getText().toString().trim().isEmpty()) {
+            editCardBack.setError(getString(R.string.error_input_empty));
+            valid = false;
+        }
+
+        return valid;
     }
 }
