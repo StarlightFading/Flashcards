@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "flashcards.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static DatabaseHelper instance;
 
@@ -26,11 +26,13 @@ class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Schema.Deck.SQL_CREATE_TABLE);
+        db.execSQL(Schema.Card.SQL_CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL(Schema.Deck.SQL_DROP_TABLE);
+        db.execSQL(Schema.Card.SQL_DROP_TABLE);
         onCreate(db);
     }
 }

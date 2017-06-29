@@ -8,6 +8,11 @@ public class Card {
 
     private String back;
 
+    private Deck deck;
+
+    public Card() {
+    }
+
     public Card(String front, String back) {
         this.front = front;
         this.back = back;
@@ -35,5 +40,13 @@ public class Card {
 
     public void setBack(String back) {
         this.back = back;
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
 }

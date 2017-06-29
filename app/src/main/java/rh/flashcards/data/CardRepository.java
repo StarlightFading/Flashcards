@@ -7,5 +7,7 @@ import rh.flashcards.entity.Deck;
 
 public interface CardRepository {
 
-    public List<Card> findForDeck(Deck deck);
+    List<Card> findForDeck(Deck deck);
+
+    void create(Card card, Deck deck);
 }

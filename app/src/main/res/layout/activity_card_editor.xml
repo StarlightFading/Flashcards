@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="rh.flashcards.feature.cardeditor.CardEditorActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <EditText
+        android:id="@+id/edit_card_front"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/front"
+        android:inputType="textCapSentences"/>
+
+    <EditText
+        android:id="@+id/edit_card_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/back"
+        android:inputType="textCapSentences"/>
+
+</LinearLayout>

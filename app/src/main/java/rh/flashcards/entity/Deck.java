@@ -1,6 +1,8 @@
 package rh.flashcards.entity;
 
-public class Deck {
+import java.io.Serializable;
+
+public class Deck implements Serializable {
 
     private Long id;
 

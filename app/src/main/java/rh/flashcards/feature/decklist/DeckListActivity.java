@@ -81,8 +81,8 @@ public class DeckListActivity extends AppCompatActivity {
 
         deckAdapter.setOnClickListener(new RecyclerViewAdapter.OnClickListener<Deck>() {
             @Override
-            public void onItemClicked(Deck item) {
-                Intent intent = new Intent(DeckListActivity.this, CardListActivity.class);
+            public void onItemClicked(Deck deck) {
+                Intent intent = CardListActivity.createIntent(DeckListActivity.this, deck);
                 startActivity(intent);
             }
         });
