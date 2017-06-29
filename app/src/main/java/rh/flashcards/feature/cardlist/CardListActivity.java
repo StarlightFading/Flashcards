@@ -14,6 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -24,6 +27,7 @@ import rh.flashcards.data.database.DatabaseCardRepository;
 import rh.flashcards.entity.Card;
 import rh.flashcards.entity.Deck;
 import rh.flashcards.feature.cardeditor.CardEditorActivity;
+import rh.flashcards.feature.study.StudyActivity;
 
 public class CardListActivity extends AppCompatActivity {
 
@@ -34,7 +38,7 @@ public class CardListActivity extends AppCompatActivity {
     RecyclerView recyclerCards;
 
     private Deck deck;
-
+    private List<Card> cards;
     private CardRepository cardRepository;
     private ActionMode actionMode;
     private Card selectedCard;
@@ -116,6 +120,25 @@ public class CardListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.card_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_start_studying:
+                startStudying();
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
     @OnClick(R.id.fab)
     public void onFabClicked() {
         Intent intent = CardEditorActivity.createIntent(this, deck);
@@ -123,7 +146,8 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     private void loadCards() {
-        cardAdapter = new CardAdapter(cardRepository.findForDeck(deck));
+        cards = cardRepository.findForDeck(deck);
+        cardAdapter = new CardAdapter(cards);
 
         // TODO: should not redo this every time cards are loaded
         cardAdapter.setOnLongClickListener(new RecyclerViewAdapter.OnLongClickListener<Card>() {
@@ -156,5 +180,10 @@ public class CardListActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void startStudying() {
+        Intent intent = StudyActivity.createIntent(this, new ArrayList<>(cards));
+        startActivity(intent);
     }
 }

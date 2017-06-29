@@ -3,21 +3,20 @@ package rh.flashcards.feature.cardeditor;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rh.android.Activity;
 import rh.flashcards.R;
 import rh.flashcards.data.CardRepository;
 import rh.flashcards.data.database.DatabaseCardRepository;
 import rh.flashcards.entity.Card;
 import rh.flashcards.entity.Deck;
 
-public class CardEditorActivity extends AppCompatActivity {
+public class CardEditorActivity extends Activity {
 
     public static final int RESULT_CARD_SAVED = 1;
 
@@ -102,7 +101,7 @@ public class CardEditorActivity extends AppCompatActivity {
         super.onStart();
 
         editCardFront.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        showKeyboard();
     }
 
     private void saveCardAndFinish() {

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="rh.flashcards.feature.study.StudyActivity">
+
+    <TextView
+        android:id="@+id/text_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="30dp"
+        android:textSize="36sp"/>
+
+    <TextView
+        android:id="@+id/text_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="30dp"
+        android:textSize="26sp"
+        android:visibility="invisible"/>
+
+    <EditText
+        android:id="@+id/edit_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:inputType="text"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/button_show_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/show_answer"/>
+
+    <LinearLayout
+        android:id="@+id/layout_correct_and_wrong_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/button_answer_wrong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wrong"/>
+
+        <Button
+            android:id="@+id/button_answer_correct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/correct"/>
+
+    </LinearLayout>
+
+</LinearLayout>

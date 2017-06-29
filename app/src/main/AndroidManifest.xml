@@ -33,7 +33,16 @@
             android:parentActivityName=".feature.cardlist.CardListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="rh.flashcards.feature.decklist.DeckListActivity"/>>
+                android:value="rh.flashcards.feature.cardlist.CardListActivity"/>
+            >
+        </activity>
+        <activity
+            android:name=".feature.study.StudyActivity"
+            android:parentActivityName=".feature.cardlist.CardListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="rh.flashcards.feature.cardlist.CardListActivity"/>
+            >
         </activity>
     </application>
 
