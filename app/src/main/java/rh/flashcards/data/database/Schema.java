@@ -25,6 +25,14 @@ final class Schema {
         static final String ID = _ID;
         static final String FRONT = "front";
         static final String BACK = "back";
+
+        static final String FRONT_SCORE = "front_score";
+
+        static final String BACK_SCORE = "back_score";
+
+        static final String FRONT_REVIEWED = "front_reviewed";
+
+        static final String BACK_REVIEWED = "back_reviewed";
         static final String DECK_ID = "deck_id";
 
         static final String SQL_CREATE_TABLE =
@@ -32,6 +40,10 @@ final class Schema {
                         + ID + " INTEGER PRIMARY KEY,"
                         + FRONT + " TEXT NOT NULL,"
                         + BACK + " TEXT NOT NULL,"
+                        + FRONT_SCORE + " INTEGER NOT NULL DEFAULT 0,"
+                        + BACK_SCORE + " INTEGER NOT NULL DEFAULT 0,"
+                        + FRONT_REVIEWED + " TEXT,"
+                        + BACK_REVIEWED + " TEXT,"
                         + DECK_ID + " INTEGER NOT NULL REFERENCES " + Deck.TABLE_NAME + " (" + Deck.ID + "))";
 
         static final String SQL_DROP_TABLE =

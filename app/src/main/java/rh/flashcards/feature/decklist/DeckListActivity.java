@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -73,6 +75,8 @@ public class DeckListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deck_list);
         ButterKnife.bind(this);
+
+        AndroidThreeTen.init(this); // TODO: move this to an application class
 
         deckRepository = new DatabaseDeckRepository(this);
 

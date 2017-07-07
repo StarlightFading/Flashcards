@@ -185,5 +185,7 @@ public class CardListActivity extends AppCompatActivity {
     private void startStudying() {
         Intent intent = StudyActivity.createIntent(this, new ArrayList<>(cards));
         startActivity(intent);
+
+        // TODO: reload card list when returning from study activity
     }
 }

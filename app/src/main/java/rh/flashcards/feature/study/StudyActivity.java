@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,11 +24,15 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import rh.android.Activity;
 import rh.flashcards.R;
+import rh.flashcards.data.CardRepository;
+import rh.flashcards.data.database.DatabaseCardRepository;
 import rh.flashcards.entity.Card;
 
 public class StudyActivity extends Activity {
 
     private static final String EXTRA_CARDS = "cards";
+
+    private static final int SCORE_LIMIT = 3;
 
     private final List<Question> questions = new ArrayList<>();
 
@@ -44,6 +50,8 @@ public class StudyActivity extends Activity {
 
     private Question currentQuestion;
 
+    private CardRepository cardRepository;
+
     public static Intent createIntent(Context context, ArrayList<Card> cards) {
         Intent intent = new Intent(context, StudyActivity.class);
         intent.putExtra(EXTRA_CARDS, cards);
@@ -56,6 +64,8 @@ public class StudyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study);
         ButterKnife.bind(this);
+
+        cardRepository = new DatabaseCardRepository(this);
 
         prepareQuestions();
         showNextQuestion();
@@ -94,11 +104,33 @@ public class StudyActivity extends Activity {
 
     @OnClick(R.id.button_answer_correct)
     public void onAnswerCorrectClicked() {
+        Card card = currentQuestion.getCard();
+        if (currentQuestion.testingFront && card.getFrontScore() != SCORE_LIMIT) {
+            card.setFrontScore(card.getFrontScore() + 1);
+            card.setFrontReviewed(LocalDate.now());
+        } else if (card.getBackScore() != SCORE_LIMIT) {
+            card.setBackScore(card.getBackScore() + 1);
+            card.setBackReviewed(LocalDate.now());
+        }
+
+        cardRepository.update(card);
+
         showNextQuestion();
     }
 
     @OnClick(R.id.button_answer_wrong)
     public void onAnswerWrongClicked() {
+        Card card = currentQuestion.getCard();
+        if (currentQuestion.testingFront && card.getFrontScore() != 0) {
+            card.setFrontScore(card.getFrontScore() - 1);
+            card.setFrontReviewed(LocalDate.now());
+        } else if (card.getBackScore() != 0) {
+            card.setBackScore(card.getBackScore() - 1);
+            card.setBackReviewed(LocalDate.now());
+        }
+
+        cardRepository.update(card);
+
         showNextQuestion();
     }
 
@@ -118,11 +150,13 @@ public class StudyActivity extends Activity {
             throw new IllegalStateException("List of Cards must be supplied via Intent");
         }
 
+        // TODO: pick cards by score and last review date
+
         ArrayList<Card> cards = (ArrayList<Card>) getIntent().getSerializableExtra(EXTRA_CARDS);
 
         for (Card card : cards) {
-            questions.add(new Question(card.getFront(), card.getBack(), false));
-            questions.add(new Question(card.getBack(), card.getFront(), true));
+            questions.add(Question.forFront(card));
+            questions.add(Question.forBack(card));
         }
 
         Collections.shuffle(questions);
@@ -158,33 +192,47 @@ public class StudyActivity extends Activity {
 
     private void evaluateAnswer() {
         String answer = editAnswer.getText().toString();
-        int answerColor = answer.equals(currentQuestion.answer) ? R.color.correct_answer : R.color.wrong_answer;
+        int answerColor = answer.equals(currentQuestion.getAnswer()) ? R.color.correct_answer : R.color.wrong_answer;
         textUserAnswer.setTextColor(ContextCompat.getColor(this, answerColor));
     }
 
     private static class Question {
-        private String question;
+        private Card card;
 
-        private String answer;
+        private boolean testingFront;
 
-        private boolean writtenAnswer;
-
-        public Question(String question, String answer, boolean writtenAnswer) {
-            this.question = question;
-            this.answer = answer;
-            this.writtenAnswer = writtenAnswer;
+        private Question(Card card) {
+            this.card = card;
         }
 
-        public String getQuestion() {
+        public static Question forFront(Card card) {
+            Question question = new Question(card);
+            question.testingFront = true;
+
             return question;
         }
 
+        public static Question forBack(Card card) {
+            Question question = new Question(card);
+            question.testingFront = false;
+
+            return question;
+        }
+
+        public String getQuestion() {
+            return testingFront ? card.getFront() : card.getBack();
+        }
+
         public String getAnswer() {
-            return answer;
+            return testingFront ? card.getBack() : card.getFront();
         }
 
         public boolean isWrittenAnswer() {
-            return writtenAnswer;
+            return !testingFront;
+        }
+
+        public Card getCard() {
+            return card;
         }
     }
 }

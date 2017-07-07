@@ -33,6 +33,16 @@ class CardAdapter extends RecyclerViewAdapter<Card, CardAdapter.ViewHolder> {
         Card card = getItem(position);
         holder.textCardFront.setText(card.getFront());
         holder.textCardBack.setText(card.getBack());
+
+        String cardScore = card.getFrontScore() + " / " + card.getBackScore();
+        holder.textCardScore.setText(cardScore);
+
+        String reviewedDates = "";
+        reviewedDates += card.getFrontReviewed() != null ? card.getFrontReviewed().toString() : "never";
+        reviewedDates += " / ";
+        reviewedDates += card.getBackReviewed() != null ? card.getBackReviewed().toString() : "never";
+
+        holder.textCardReviewedDates.setText(reviewedDates);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -42,6 +52,12 @@ class CardAdapter extends RecyclerViewAdapter<Card, CardAdapter.ViewHolder> {
 
         @BindView(R.id.text_card_back)
         TextView textCardBack;
+
+        @BindView(R.id.text_card_score)
+        TextView textCardScore;
+
+        @BindView(R.id.text_card_reviewed_dates)
+        TextView textCardReviewedDates;
 
         public ViewHolder(View itemView) {
             super(itemView);

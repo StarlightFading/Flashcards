@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +80,11 @@ public class DatabaseCardRepository implements CardRepository {
         ContentValues values = new ContentValues();
         values.put(Schema.Card.FRONT, card.getFront());
         values.put(Schema.Card.BACK, card.getBack());
+        values.put(Schema.Card.FRONT_SCORE, card.getFrontScore());
+        values.put(Schema.Card.BACK_SCORE, card.getBackScore());
+
+        values.put(Schema.Card.FRONT_REVIEWED, formatDate(card.getFrontReviewed()));
+        values.put(Schema.Card.BACK_REVIEWED, formatDate(card.getBackReviewed()));
 
         return values;
     }
@@ -86,15 +94,39 @@ public class DatabaseCardRepository implements CardRepository {
         card.setId(cursor.getLong(cursor.getColumnIndexOrThrow(Schema.Card.ID)));
         card.setFront(cursor.getString(cursor.getColumnIndexOrThrow(Schema.Card.FRONT)));
         card.setBack(cursor.getString(cursor.getColumnIndexOrThrow(Schema.Card.BACK)));
+        card.setFrontScore(cursor.getInt(cursor.getColumnIndexOrThrow(Schema.Card.FRONT_SCORE)));
+        card.setBackScore(cursor.getInt(cursor.getColumnIndexOrThrow(Schema.Card.BACK_SCORE)));
+        card.setFrontReviewed(parseDate(cursor.getString(cursor.getColumnIndexOrThrow(Schema.Card.FRONT_REVIEWED))));
+        card.setBackReviewed(parseDate(cursor.getString(cursor.getColumnIndexOrThrow(Schema.Card.BACK_REVIEWED))));
 
         return card;
+    }
+
+    private String formatDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
+        return date.format(DateTimeFormatter.ISO_DATE);
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        if (dateStr == null) {
+            return null;
+        }
+
+        return LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
     }
 
     private String[] getColumns() {
         return new String[]{
                 Schema.Card.ID,
                 Schema.Card.FRONT,
-                Schema.Card.BACK
+                Schema.Card.BACK,
+                Schema.Card.FRONT_SCORE,
+                Schema.Card.BACK_SCORE,
+                Schema.Card.FRONT_REVIEWED,
+                Schema.Card.BACK_REVIEWED,
         };
     }
 }

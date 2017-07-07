@@ -7,7 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "flashcards.db";
-    private static final int DB_VERSION = 2;
+
+    private static final int DB_VERSION = 4;
 
     private static DatabaseHelper instance;
 

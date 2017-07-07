@@ -1,5 +1,7 @@
 package rh.flashcards.entity;
 
+import org.threeten.bp.LocalDate;
+
 import java.io.Serializable;
 
 public class Card implements Serializable {
@@ -11,6 +13,14 @@ public class Card implements Serializable {
     private String back;
 
     private Deck deck;
+
+    private int frontScore;
+
+    private int backScore;
+
+    private LocalDate frontReviewed;
+
+    private LocalDate backReviewed;
 
     public Card() {
     }
@@ -50,5 +60,37 @@ public class Card implements Serializable {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public int getFrontScore() {
+        return frontScore;
+    }
+
+    public void setFrontScore(int frontScore) {
+        this.frontScore = frontScore;
+    }
+
+    public int getBackScore() {
+        return backScore;
+    }
+
+    public void setBackScore(int backScore) {
+        this.backScore = backScore;
+    }
+
+    public LocalDate getFrontReviewed() {
+        return frontReviewed;
+    }
+
+    public void setFrontReviewed(LocalDate frontReviewed) {
+        this.frontReviewed = frontReviewed;
+    }
+
+    public LocalDate getBackReviewed() {
+        return backReviewed;
+    }
+
+    public void setBackReviewed(LocalDate backReviewed) {
+        this.backReviewed = backReviewed;
     }
 }
