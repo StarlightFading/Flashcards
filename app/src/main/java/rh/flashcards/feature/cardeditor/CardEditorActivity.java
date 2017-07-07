@@ -100,8 +100,7 @@ public class CardEditorActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        editCardFront.requestFocus();
-        showKeyboard();
+        showKeyboard(editCardFront);
     }
 
     private void saveCardAndFinish() {

@@ -24,12 +24,24 @@
         android:textSize="26sp"
         android:visibility="invisible"/>
 
+    <TextView
+        android:id="@+id/text_user_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:visibility="gone"/>
+
     <EditText
         android:id="@+id/edit_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:imeOptions="actionDone"
         android:inputType="text"
+        android:maxLines="1"
         android:visibility="invisible"/>
 
     <Button
