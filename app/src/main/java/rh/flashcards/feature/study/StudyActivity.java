@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,10 +28,11 @@ import rh.flashcards.R;
 import rh.flashcards.data.CardRepository;
 import rh.flashcards.data.database.DatabaseCardRepository;
 import rh.flashcards.entity.Card;
+import rh.flashcards.entity.Deck;
 
 public class StudyActivity extends Activity {
 
-    private static final String EXTRA_CARDS = "cards";
+    private static final String EXTRA_DECK = "deck";
 
     private static final int SCORE_LIMIT = 3;
 
@@ -52,9 +54,9 @@ public class StudyActivity extends Activity {
 
     private CardRepository cardRepository;
 
-    public static Intent createIntent(Context context, ArrayList<Card> cards) {
+    public static Intent createIntent(Context context, Deck deck) {
         Intent intent = new Intent(context, StudyActivity.class);
-        intent.putExtra(EXTRA_CARDS, cards);
+        intent.putExtra(EXTRA_DECK, deck);
 
         return intent;
     }
@@ -105,11 +107,17 @@ public class StudyActivity extends Activity {
     @OnClick(R.id.button_answer_correct)
     public void onAnswerCorrectClicked() {
         Card card = currentQuestion.getCard();
-        if (currentQuestion.testingFront && card.getFrontScore() != SCORE_LIMIT) {
-            card.setFrontScore(card.getFrontScore() + 1);
+        if (currentQuestion.testingFront) {
+            if (card.getFrontScore() != SCORE_LIMIT) {
+                card.setFrontScore(card.getFrontScore() + 1);
+            }
+
             card.setFrontReviewed(LocalDate.now());
-        } else if (card.getBackScore() != SCORE_LIMIT) {
-            card.setBackScore(card.getBackScore() + 1);
+        } else {
+            if (card.getBackScore() != SCORE_LIMIT) {
+                card.setBackScore(card.getBackScore() + 1);
+            }
+
             card.setBackReviewed(LocalDate.now());
         }
 
@@ -121,11 +129,17 @@ public class StudyActivity extends Activity {
     @OnClick(R.id.button_answer_wrong)
     public void onAnswerWrongClicked() {
         Card card = currentQuestion.getCard();
-        if (currentQuestion.testingFront && card.getFrontScore() != 0) {
-            card.setFrontScore(card.getFrontScore() - 1);
+        if (currentQuestion.testingFront) {
+            if (card.getFrontScore() != 0) {
+                card.setFrontScore(card.getFrontScore() - 1);
+            }
+
             card.setFrontReviewed(LocalDate.now());
-        } else if (card.getBackScore() != 0) {
-            card.setBackScore(card.getBackScore() - 1);
+        } else {
+            if (card.getBackScore() != 0) {
+                card.setBackScore(card.getBackScore() - 1);
+            }
+
             card.setBackReviewed(LocalDate.now());
         }
 
@@ -146,17 +160,22 @@ public class StudyActivity extends Activity {
     }
 
     private void prepareQuestions() {
-        if (!getIntent().hasExtra(EXTRA_CARDS)) {
-            throw new IllegalStateException("List of Cards must be supplied via Intent");
+        if (!getIntent().hasExtra(EXTRA_DECK)) {
+            throw new IllegalStateException("Deck to review must be supplied via Intent");
         }
 
-        // TODO: pick cards by score and last review date
-
-        ArrayList<Card> cards = (ArrayList<Card>) getIntent().getSerializableExtra(EXTRA_CARDS);
+        LocalDate reviewDate = LocalDate.now();
+        Deck deck = (Deck) getIntent().getSerializableExtra(EXTRA_DECK);
+        List<Card> cards = cardRepository.findCardsForStudying(deck, reviewDate);
 
         for (Card card : cards) {
-            questions.add(Question.forFront(card));
-            questions.add(Question.forBack(card));
+            if (ChronoUnit.DAYS.between(card.getFrontReviewed(), reviewDate) >= card.getFrontScore()) {
+                questions.add(Question.forFront(card));
+            }
+
+            if (ChronoUnit.DAYS.between(card.getBackReviewed(), reviewDate) >= card.getBackScore()) {
+                questions.add(Question.forBack(card));
+            }
         }
 
         Collections.shuffle(questions);

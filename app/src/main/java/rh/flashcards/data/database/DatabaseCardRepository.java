@@ -46,6 +46,30 @@ public class DatabaseCardRepository implements CardRepository {
     }
 
     @Override
+    public List<Card> findCardsForStudying(Deck deck, LocalDate studyDate) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor;
+        cursor = db.query(
+                Schema.Card.TABLE_NAME,
+                getColumns(),
+                Schema.Card.DECK_ID + "=?"
+                        + " AND (julianday(?) - julianday(" + Schema.Card.FRONT_REVIEWED + ") >= " + Schema.Card.FRONT_SCORE
+                        + " OR julianday(?) - julianday(" + Schema.Card.BACK_REVIEWED + ") >= " + Schema.Card.BACK_SCORE + ")",
+                new String[]{String.valueOf(deck.getId()), formatDate(studyDate), formatDate(studyDate)},
+                null,
+                null,
+                null);
+
+        List<Card> cards = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            cards.add(createCardFromCursor(cursor));
+        }
+
+        return cards;
+    }
+
+    @Override
     public void create(Card card, Deck deck) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 

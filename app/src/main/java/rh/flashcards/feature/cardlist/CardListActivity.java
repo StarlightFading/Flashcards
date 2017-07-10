@@ -14,9 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,7 +35,6 @@ public class CardListActivity extends AppCompatActivity {
     RecyclerView recyclerCards;
 
     private Deck deck;
-    private List<Card> cards;
     private CardRepository cardRepository;
     private ActionMode actionMode;
     private Card selectedCard;
@@ -146,8 +142,7 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     private void loadCards() {
-        cards = cardRepository.findForDeck(deck);
-        cardAdapter = new CardAdapter(cards);
+        cardAdapter = new CardAdapter(cardRepository.findForDeck(deck));
 
         // TODO: should not redo this every time cards are loaded
         cardAdapter.setOnLongClickListener(new RecyclerViewAdapter.OnLongClickListener<Card>() {
@@ -183,7 +178,7 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     private void startStudying() {
-        Intent intent = StudyActivity.createIntent(this, new ArrayList<>(cards));
+        Intent intent = StudyActivity.createIntent(this, deck);
         startActivity(intent);
 
         // TODO: reload card list when returning from study activity
