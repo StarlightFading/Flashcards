@@ -30,7 +30,8 @@
         </activity>
         <activity
             android:name=".feature.cardeditor.CardEditorActivity"
-            android:parentActivityName=".feature.cardlist.CardListActivity">
+            android:parentActivityName=".feature.cardlist.CardListActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="rh.flashcards.feature.cardlist.CardListActivity"/>
