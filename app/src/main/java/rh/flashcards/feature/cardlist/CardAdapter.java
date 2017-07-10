@@ -37,9 +37,9 @@ class CardAdapter extends RecyclerViewAdapter<Card, CardAdapter.ViewHolder> {
         String cardScore = card.getFrontScore() + " / " + card.getBackScore();
         holder.textCardScore.setText(cardScore);
 
-        String reviewedDates = card.getFrontReviewed().plusDays(card.getFrontScore()).toString();
+        String reviewedDates = card.getFrontReviewed() != null ? card.getFrontReviewed().plusDays(card.getFrontScore()).toString() : "today";
         reviewedDates += " / ";
-        reviewedDates += card.getBackReviewed().plusDays(card.getBackScore()).toString();
+        reviewedDates += card.getBackReviewed() != null ? card.getBackReviewed().plusDays(card.getBackScore()).toString() : "today";
 
         holder.textCardReviewedDates.setText(reviewedDates);
     }

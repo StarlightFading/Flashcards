@@ -169,11 +169,13 @@ public class StudyActivity extends Activity {
         List<Card> cards = cardRepository.findCardsForStudying(deck, reviewDate);
 
         for (Card card : cards) {
-            if (ChronoUnit.DAYS.between(card.getFrontReviewed(), reviewDate) >= card.getFrontScore()) {
+            if (card.getFrontReviewed() == null
+                    || ChronoUnit.DAYS.between(card.getFrontReviewed(), reviewDate) >= card.getFrontScore()) {
                 questions.add(Question.forFront(card));
             }
 
-            if (ChronoUnit.DAYS.between(card.getBackReviewed(), reviewDate) >= card.getBackScore()) {
+            if (card.getBackReviewed() == null
+                    || ChronoUnit.DAYS.between(card.getBackReviewed(), reviewDate) >= card.getBackScore()) {
                 questions.add(Question.forBack(card));
             }
         }

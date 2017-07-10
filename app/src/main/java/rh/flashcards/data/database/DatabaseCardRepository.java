@@ -55,7 +55,9 @@ public class DatabaseCardRepository implements CardRepository {
                 getColumns(),
                 Schema.Card.DECK_ID + "=?"
                         + " AND (julianday(?) - julianday(" + Schema.Card.FRONT_REVIEWED + ") >= " + Schema.Card.FRONT_SCORE
-                        + " OR julianday(?) - julianday(" + Schema.Card.BACK_REVIEWED + ") >= " + Schema.Card.BACK_SCORE + ")",
+                        + " OR julianday(?) - julianday(" + Schema.Card.BACK_REVIEWED + ") >= " + Schema.Card.BACK_SCORE
+                        + " OR " + Schema.Card.FRONT_REVIEWED + " is NULL"
+                        + " OR " + Schema.Card.BACK_REVIEWED + " is NULL" + ")",
                 new String[]{String.valueOf(deck.getId()), formatDate(studyDate), formatDate(studyDate)},
                 null,
                 null,
